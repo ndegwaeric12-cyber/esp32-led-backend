@@ -1,13 +1,31 @@
-const express = require("express");
-const mqtt = require("mqtt");
+import express from "express";
+import cors from "cors";
+
 const app = express();
+app.use(cors());
+app.use(express.json());
 
-const client = mqtt.connect("mqtt://broker.hivemq.com");
+// This is your shared "command storage"
+let deviceState = {
+  led: 0
+};
 
-app.post("/led/:state", (req, res) => {
-  const state = req.params.state.toUpperCase();
-  client.publish("erick/led", state);
-  res.send("LED " + state);
+// 🌍 Web dashboard sends command here
+app.post("/control", (req, res) => {
+  const { led } = req.body;
+  deviceState.led = led;
+  res.json({ message: "Command updated", deviceState });
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+// 📡 ESP32 checks here for latest command
+app.get("/state", (req, res) => {
+  res.json(deviceState);
+});
+
+// simple test route
+app.get("/", (req, res) => {
+  res.send("ESP32 Control Server is running 🚀");
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Server running on port", PORT));
