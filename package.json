@@ -1,15 +1,13 @@
 {
-  "name": "esp32-led-backend",
+  "name": "esp32-control-server",
   "version": "1.0.0",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "type": "module",
   "dependencies": {
     "express": "^4.18.2",
-    "mqtt": "^4.3.7"
+    "cors": "^2.8.5"
   },
-  "engines": {
-    "node": "18.x"
+  "scripts": {
+    "start": "node server.js"
   }
 }
